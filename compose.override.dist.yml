@@ -1,10 +1,11 @@
 services:
-    php:
-        image: ghcr.io/sylius/sylius-php:8.3-fixuid-xdebug-alpine
+    frankenphp:
+        image: ghcr.io/matyo91/sylius-frankenphp-1.5-php8.3-alpine:1.5-php8.3-alpine
         user: ${DOCKER_USER:-1000:1000}
         depends_on:
             mysql:
                 condition: service_healthy
+        entrypoint: ""
         environment:
             # You can move these environment variables to your .env.local file
             APP_ENV: ${ENV:-prod}
@@ -37,19 +38,15 @@ services:
           # if you develop on Linux, you may use a bind-mounted host directory instead
 #          - ./public/media:/srv/sylius/public/media:rw
           - public-media:/srv/sylius/public/media:rw
+        ports:
+            - "80:80"
     mysql:
         volumes:
             - mysql-data:/var/lib/mysql:rw
         ports:
             - "3306:3306"
-    nginx:
-        volumes:
-            - ./public:/srv/sylius/public:ro
-            # if you develop on Linux, you may use a bind-mounted host directory instead
-#            - ./public/media:/srv/sylius/public/media:ro
-            - public-media:/srv/sylius/public/media:ro,nocopy
-        ports:
-            - "80:80"
+        environment:
+            MYSQL_DATABASE: sylius_prod
     nodejs:
         image: node:${NODE_VERSION:-22}-alpine
         user: ${DOCKER_USER:-1000:1000}
