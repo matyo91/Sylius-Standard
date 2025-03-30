@@ -28,6 +28,17 @@ services:
             # This should correspond to the server declared in PHPStorm `Preferences | Languages & Frameworks | PHP | Servers`
             # Then PHPStorm will use the corresponding path mappings
             PHP_IDE_CONFIG: serverName=sylius
+            XDG_DATA_HOME: /caddy-data
+            XDG_CONFIG_HOME: /caddy-config
+            PWA_UPSTREAM: pwa:3000
+            SERVER_NAME: ${SERVER_NAME:-localhost}, php:80
+            MERCURE_PUBLISHER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
+            MERCURE_SUBSCRIBER_JWT_KEY: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
+            TRUSTED_PROXIES: ${TRUSTED_PROXIES:-127.0.0.0/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16}
+            TRUSTED_HOSTS: ${TRUSTED_HOSTS:-^${SERVER_NAME:-example\.com|localhost}|php$$}
+            MERCURE_URL: ${CADDY_MERCURE_URL:-http://php/.well-known/mercure}
+            MERCURE_PUBLIC_URL: ${CADDY_MERCURE_PUBLIC_URL:-https://${SERVER_NAME:-localhost}/.well-known/mercure}
+            MERCURE_JWT_SECRET: ${CADDY_MERCURE_JWT_SECRET:-!ChangeThisMercureHubJWTSecretKey!}
         extra_hosts:
             - "host.docker.internal:host-gateway"
         volumes:
@@ -38,10 +49,15 @@ services:
           # if you develop on Linux, you may use a bind-mounted host directory instead
 #          - ./public/media:/srv/sylius/public/media:rw
           - public-media:/srv/sylius/public/media:rw
-          - caddy_data:/data
-          - caddy_config:/config
+          - caddy_data:/caddy-data:rw
+          - caddy_config:/caddy-config:rw
+          - mercure_config:/mercure-config:rw
         ports:
             - "80:80"
+        command: >
+          sh -c "chown -R 1000:1000 /caddy-data /caddy-config &&
+                 mkdir -p /caddy-data/caddy/pki /caddy-config/caddy &&
+                 frankenphp run --config /etc/caddy/Caddyfile"
     mysql:
         volumes:
             - mysql-data:/var/lib/mysql:rw
@@ -68,3 +84,4 @@ volumes:
     public-media:
     caddy_data:
     caddy_config:
+    mercure_config:
