@@ -50,11 +50,11 @@ services:
 #          - ./public/media:/srv/sylius/public/media:rw
           - public-media:/srv/sylius/public/media:rw
           # if you develop on Linux, you may use a bind-mounted host directory instead
-          - frankenphp_data:/frankenphp-data
 #          - ./frankenphp-data:/frankenphp-data:rw
+          - frankenphp_data:/frankenphp-data
           # if you develop on Linux, you may use a bind-mounted host directory instead
-          - frankenphp_config:/frankenphp-config
 #          - ./frankenphp-config:/frankenphp-config:rw
+          - frankenphp_config:/frankenphp-config
         ports:
             - "80:80"
         command: >
