@@ -56,7 +56,9 @@ services:
 #          - ./frankenphp-config:/frankenphp-config:rw
           - frankenphp_config:/frankenphp-config
         ports:
-            - "80:80"
+          - "80:80" # HTTP
+          - "443:443" # HTTPS
+          - "443:443/udp" # HTTP/3
         command: >
           sh -c "chown -R 1000:1000 /frankenphp-data /frankenphp-config &&
                  mkdir -p /frankenphp-data/caddy/pki /frankenphp-config/caddy &&
