@@ -38,6 +38,8 @@ services:
           # if you develop on Linux, you may use a bind-mounted host directory instead
 #          - ./public/media:/srv/sylius/public/media:rw
           - public-media:/srv/sylius/public/media:rw
+          - caddy_data:/data
+          - caddy_config:/config
         ports:
             - "80:80"
     mysql:
@@ -45,8 +47,6 @@ services:
             - mysql-data:/var/lib/mysql:rw
         ports:
             - "3306:3306"
-        environment:
-            MYSQL_DATABASE: sylius_prod
     nodejs:
         image: node:${NODE_VERSION:-22}-alpine
         user: ${DOCKER_USER:-1000:1000}
@@ -66,3 +66,5 @@ services:
 volumes:
     mysql-data:
     public-media:
+    caddy_data:
+    caddy_config:
